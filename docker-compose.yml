@@ -1,7 +1,7 @@
-version: '3.8'
 services:
   db:
     image: mongo:latest
+    container_name: english_db
     ports:
       - "27017:27017"
     volumes:
@@ -9,8 +9,11 @@ services:
 
   backend:
     build: ./backend
+    container_name: english_backend
     ports:
       - "5000:5000"
+    env_file:
+      - ./backend/.env
     environment:
       - MONGO_URI=mongodb://db:27017/english_school
     volumes:
@@ -21,6 +24,7 @@ services:
 
   frontend:
     build: ./frontend
+    container_name: english_frontend
     ports:
       - "3000:5173" # Буде доступно на http://localhost:3000
     volumes:

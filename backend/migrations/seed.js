@@ -1,85 +1,128 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const Course = require("../models/Course");
+const Assignment = require("../models/Assignment");
 
 async function seedDB() {
   try {
-    // 1. Перевіряємо, чи є вже курси в базі
-    const courseCount = await Course.countDocuments();
-    if (courseCount === 0) {
-      console.log("🌱 Починаємо наповнення бази курсів...");
+    // 1. Очищення бази перед наповненням (щоб уникнути дублікатів при перезапуску)
+    await User.deleteMany({});
+    await Course.deleteMany({});
+    await Assignment.deleteMany({});
+    console.log("🗑️  Base cleared");
 
-      const courses = await Course.insertMany([
-        {
-          title: "English for Beginners (A1)",
-          price: 2500,
-          level: "A1",
-          description: "Базовий курс для тих, хто починає з нуля.",
-          lessons: [
-            { topic: "Greetings", type: "Video", duration: "15 min" },
-            { topic: "Numbers 1-100", type: "Quiz", points: 10 },
-          ],
-        },
-        {
-          title: "Business English (B2)",
-          price: 4000,
-          level: "B2",
-          description: "Курс для ділового спілкування та кар'єри.",
-          lessons: [
-            { topic: "Meetings & Agenda", type: "Video", duration: "30 min" },
-            { topic: "Business Correspondence", type: "Task", points: 20 },
-          ],
-        },
-        {
-          title: "IELTS Preparation",
-          price: 5500,
-          level: "C1",
-          description: "Інтенсивна підготовка до міжнародного іспиту.",
-          lessons: [
-            { topic: "Academic Writing", type: "Video", duration: "45 min" },
-            { topic: "Speaking Simulation", type: "Live Session", points: 50 },
-          ],
-        },
-      ]);
-      console.log("✅ Курси успішно додані!");
-    }
+    // 2. Хешування паролів (Вимога SEC-3)
+    const salt = await bcrypt.genSalt(10);
+    const adminPass = await bcrypt.hash("admin123", salt);
+    const studentPass = await bcrypt.hash("password123", salt);
+    const parentPass = await bcrypt.hash("parent123", salt);
 
-    // 2. Створюємо тестових користувачів (Адмін, Студент, Батько)
-    const userCount = await User.countDocuments();
-    if (userCount === 0) {
-      console.log("👤 Створюємо тестових користувачів...");
+    // 3. Створення користувачів
+    console.log("👤 Seeding users...");
 
-      // Створюємо Адміна
-      await User.create({
-        name: "Головний Адмін",
-        email: "admin@school.com",
-        password: "admin123", // У реальному проекті тут має бути хеш
-        role: "admin",
-      });
+    // Створюємо Студента
+    const student = await User.create({
+      name: "Іван Студент",
+      email: "student@test.com",
+      password: studentPass,
+      role: "student",
+      level: "B1",
+      balance: 12,
+    });
 
-      // Створюємо Студента
-      const student = await User.create({
-        name: "Іван Студент",
-        email: "student@test.com",
-        password: "password123",
-        role: "student",
-        level: "A1",
-        balance: 2, // наприклад, 2 заняття вже оплачено
-      });
+    // Створюємо Батька (прив'язуємо до студента Івана)
+    await User.create({
+      name: "Петро Батько",
+      email: "parent@test.com",
+      password: parentPass,
+      role: "parent",
+      childId: student._id, // Зв'язок
+    });
 
-      // Створюємо Батька і прив'язуємо його до студента
-      await User.create({
-        name: "Петро Батько",
-        email: "parent@test.com",
-        password: "parent123",
-        role: "parent",
-        childId: student._id, // Ось він, зв'язок!
-      });
+    // Створюємо Адміна
+    await User.create({
+      name: "Головний Адмін",
+      email: "admin@school.com",
+      password: adminPass,
+      role: "admin",
+    });
 
-      console.log("✅ Користувачі додані (Admin, Student, Parent)!");
-    }
+    // 4. Створення курсів та уроків (вбудовані в курс)
+    console.log("📚 Seeding courses...");
+    const courses = await Course.insertMany([
+      {
+        title: "Intermediate English (B1)",
+        level: "B1",
+        price: 3200,
+        description:
+          "Курс для тих, хто хоче вільно спілкуватися на повсякденні теми.",
+        lessons: [
+          {
+            topic: "Business Correspondence",
+            type: "Video",
+            duration: "30 min",
+          },
+          {
+            topic: "Present Perfect & Business Idioms",
+            type: "Live Session",
+            duration: "60 хв",
+            scheduledDate: new Date(new Date().getTime() + 86400000), // Завтра
+          },
+        ],
+      },
+      {
+        title: "Business English (B2)",
+        level: "B2",
+        price: 4500,
+        description: "Професійна англійська для кар'єрного росту.",
+        lessons: [
+          {
+            topic: "Meetings & Negotiations",
+            type: "Live Session",
+            duration: "90 хв",
+            scheduledDate: new Date(),
+          },
+        ],
+      },
+      {
+        title: "IELTS Preparation",
+        level: "C1",
+        price: 6000,
+        description: "Інтенсивна підготовка до міжнародного іспиту.",
+        lessons: [],
+      },
+    ]);
+
+    // 5. Створення дедлайнів (Завдань)
+    console.log("⏳ Seeding assignments...");
+    await Assignment.insertMany([
+      {
+        studentId: student._id,
+        courseId: courses[0]._id,
+        title: "Grammar Quiz: Past Tenses",
+        dueDate: new Date(new Date().getTime() + 86400000 * 2), // Через 2 дні
+        status: "pending",
+      },
+      {
+        studentId: student._id,
+        courseId: courses[0]._id,
+        title: "Essay: My Future Career",
+        dueDate: new Date(new Date().getTime() + 86400000 * 5), // Через 5 днів
+        status: "pending",
+      },
+      {
+        studentId: student._id,
+        courseId: courses[0]._id,
+        title: "Listening: Unit 4",
+        dueDate: new Date(new Date().getTime() - 86400000), // Вчора (протерміновано)
+        status: "pending",
+      },
+    ]);
+
+    console.log("✅ Database seeded successfully!");
   } catch (error) {
-    console.error("❌ Помилка під час наповнення бази:", error);
+    console.error("❌ Seed error:", error);
   }
 }
 

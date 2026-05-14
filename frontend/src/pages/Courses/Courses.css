@@ -1,0 +1,44 @@
+.courses-page {
+  padding: 60px 8%;
+  max-width: 1400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.courses-header { margin-bottom: 40px; }
+.courses-header h1 { font-size: 3rem; font-weight: 900; color: #1e293b; margin-bottom: 15px; }
+.courses-header h1 span { color: #4f46e5; }
+.courses-header p { color: #64748b; font-size: 1.2rem; }
+
+.courses-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 30px;
+}
+
+.no-results {
+  grid-column: 1 / -1;
+  padding: 50px;
+  background: #f8fafc;
+  border-radius: 20px;
+}
+
+/* --- АДАПТИВНІСТЬ --- */
+@media (max-width: 1024px) {
+  .courses-header h1 { font-size: 2.5rem; }
+  .courses-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+}
+
+@media (max-width: 600px) {
+  .courses-page { padding: 40px 20px; }
+  .courses-header h1 { font-size: 2rem; }
+  .courses-grid { grid-template-columns: 1fr; }
+  
+  .course-footer {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+  
+  .btn-buy { justify-content: center; }
+}

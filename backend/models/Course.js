@@ -13,6 +13,7 @@ const lessonSchema = new mongoose.Schema({
   duration: String,
   points: Number,
   link: String,
+  scheduledDate: Date
 });
 
 const courseSchema = new mongoose.Schema({

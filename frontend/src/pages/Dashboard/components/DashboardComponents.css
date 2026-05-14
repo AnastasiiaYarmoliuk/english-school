@@ -1,0 +1,70 @@
+/* StatCards */
+.stat-card-box {
+  background: white;
+  padding: 20px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+
+.stat-icon-wrapper {
+  padding: 12px;
+  border-radius: 12px;
+}
+.stat-icon-wrapper.level { background: #fffbeb; color: #f59e0b; }
+.stat-icon-wrapper.balance { background: #ecfdf5; color: #10b981; }
+
+.stat-content { display: flex; flex-direction: column; }
+.stat-label { font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase; }
+.stat-value { font-size: 1.4rem; font-weight: 800; color: #1e293b; }
+
+/* Next Lesson */
+.next-lesson-card {
+  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+  color: white;
+  padding: 30px;
+  position: relative;
+}
+
+.card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255,255,255,0.2);
+  padding: 4px 12px;
+  border-radius: 100px;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.lesson-main h2 { font-size: 1.8rem; margin: 15px 0; letter-spacing: -0.02em; }
+.lesson-details { display: flex; gap: 20px; opacity: 0.9; font-size: 0.9rem; }
+.lesson-details span { display: flex; align-items: center; gap: 6px; }
+
+.btn-join {
+  margin-top: 25px;
+  background: white;
+  color: #4f46e5;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+.btn-join:hover { transform: scale(1.02); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
+
+/* Deadlines */
+.deadline-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #f8fafc;
+}
+.deadline-info { display: flex; flex-direction: column; }
+.deadline-title { font-weight: 700; color: #1e293b; font-size: 0.95rem; }
+.deadline-date { font-size: 0.8rem; color: #ef4444; font-weight: 600; }

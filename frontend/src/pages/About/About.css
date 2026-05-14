@@ -1,0 +1,112 @@
+.about-page {
+  overflow-x: hidden;
+}
+
+/* --- HERO SECTION --- */
+.about-hero {
+  padding: 80px 8%;
+  background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+  text-align: center;
+}
+
+.about-hero h1 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 900;
+  color: #1e293b;
+  margin-bottom: 20px;
+}
+
+.about-hero p {
+  font-size: 1.2rem;
+  color: #64748b;
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+/* --- STATS SECTION --- */
+.about-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 30px;
+  padding: 60px 8%;
+  background: white;
+}
+
+.stat-box {
+  text-align: center;
+  padding: 30px;
+  border-radius: 24px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+}
+
+.stat-number {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #4f46e5;
+  margin-bottom: 10px;
+}
+
+.stat-label {
+  font-weight: 700;
+  color: #475569;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+}
+
+/* --- CONTENT SECTIONS --- */
+.about-content {
+  padding: 80px 8%;
+  display: flex;
+  align-items: center;
+  gap: 60px;
+}
+
+.about-text {
+  flex: 1;
+}
+
+.about-text h2 {
+  font-size: 2.2rem;
+  margin-bottom: 25px;
+  color: #1e293b;
+}
+
+.about-text p {
+  color: #64748b;
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+.about-image-placeholder {
+  flex: 1;
+  height: 400px;
+  background: #eef2ff;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4f46e5;
+  border: 2px dashed #c7d2fe;
+}
+
+/* --- АДАПТИВНІСТЬ --- */
+@media (max-width: 968px) {
+  .about-content {
+    flex-direction: column;
+    text-align: center;
+    padding: 40px 20px;
+  }
+  .about-image-placeholder {
+    width: 100%;
+    height: 300px;
+  }
+}
+
+@media (max-width: 480px) {
+  .about-hero { padding: 60px 20px; }
+  .stat-number { font-size: 2rem; }
+}

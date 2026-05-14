@@ -39,6 +39,10 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    adminSecret: {
+      type: String,
+      default: null
+    }
   },
   { timestamps: true },
 );
