@@ -4,6 +4,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
+const path = require("path");
 
 const seedDB = require("./migrations/seed");
 const authRoutes = require("./routes/authRoutes");
@@ -16,12 +17,18 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
 // Підключення маршрутів
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/payments", paymentRoutes);
+
+const fs = require("fs");
+const dir = "./uploads";
+if (!fs.existsSync(dir)) fs.mkdirSync(dir);
 
 const mongoURI = process.env.MONGO_URI || "mongodb://db:27017/english_school";
 mongoose

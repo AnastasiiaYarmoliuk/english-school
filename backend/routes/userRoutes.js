@@ -4,6 +4,34 @@ const User = require("../models/User");
 const Assignment = require("../models/Assignment");
 const Course = require("../models/Course");
 
+const multer = require("multer");
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, "uploads/"),
+  filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
+});
+const upload = multer({ storage });
+
+// Здача завдання
+router.post(
+  "/assignments/:id/submit",
+  upload.single("file"),
+  async (req, res) => {
+    try {
+      const updateData = {
+        status: "submitted",
+        answerText: req.body.answerText,
+        submittedAt: new Date(),
+      };
+      if (req.file) updateData.fileName = req.file.filename;
+
+      await Assignment.findByIdAndUpdate(req.params.id, updateData);
+      res.json({ message: "Завдання успішно здано!" });
+    } catch (err) {
+      res.status(500).json({ message: "Помилка при здачі" });
+    }
+  },
+);
+
 // Отримати дані для дашборду
 router.get("/:id/dashboard", async (req, res) => {
   try {

@@ -23,10 +23,8 @@
 
 /* Next Lesson */
 .next-lesson-card {
-  background: linear-gradient(135deg, #4f46e5 0%, #6366f1 100%);
+  background: #4f46e5 !important; /* Насичений синій */
   color: white;
-  padding: 30px;
-  position: relative;
 }
 
 .card-badge {
@@ -68,3 +66,78 @@
 .deadline-info { display: flex; flex-direction: column; }
 .deadline-title { font-weight: 700; color: #1e293b; font-size: 0.95rem; }
 .deadline-date { font-size: 0.8rem; color: #ef4444; font-weight: 600; }
+
+.progress-bar-bg {
+  width: 100%;
+  height: 12px;
+  background: #e2e8f0;
+  border-radius: 100px;
+  margin: 15px 0;
+  overflow: hidden;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4f46e5, #818cf8);
+  border-radius: 100px;
+  transition: width 0.5s ease;
+}
+
+.btn-submit-task {
+  background: #f1f5f9;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.btn-submit-task:hover { background: #e2e8f0; }
+
+.status-done {
+  color: #10b981;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.upload-zone {
+  margin-top: 10px;
+  padding: 10px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px dashed #cbd5e1;
+}
+
+.payment-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.payment-info b { display: block; font-size: 0.9rem; color: #1e293b; }
+.payment-info span { font-size: 0.75rem; color: #94a3b8; }
+
+.payment-amount { text-align: right; display: flex; align-items: center; gap: 8px; }
+.amount { font-weight: 800; color: #10b981; }
+
+.btn-pay-now {
+  width: 100%;
+  margin-top: 20px;
+  background: #4f46e5;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}

@@ -17,7 +17,10 @@ const assignmentSchema = new mongoose.Schema({
     type: String,
     enum: ["pending", "submitted", "completed"],
     default: "pending",
-  },
+    },
+    answerText: String,
+    fileName: String,
+  grade: Number
 });
 
 module.exports = mongoose.model("Assignment", assignmentSchema);

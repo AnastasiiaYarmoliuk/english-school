@@ -1,16 +1,10 @@
 import React, { useState, useEffect } from "react";
 import api from "../../api/axios";
-import {
-  LayoutDashboard,
-  Users,
-  BookOpen,
-  CreditCard,
-  TrendingUp,
-  Trash2,
-  Edit3,
-  Plus,
-  Search,
-} from "lucide-react";
+import AdminSidebar from "./components/AdminSidebar";
+import OverviewTab from "./components/OverviewTab";
+import UsersTab from "./components/UsersTab";
+import CoursesTab from "./components/CoursesTab";
+import FinanceTab from "./components/FinanceTab";
 import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
@@ -22,6 +16,20 @@ const AdminDashboard = () => {
     payments: [],
   });
   const [loading, setLoading] = useState(true);
+
+  const [isCourseModalOpen, setIsCourseModalOpen] = useState(false);
+  const [currentCourse, setCurrentCourse] = useState({
+    title: "",
+    level: "A1",
+    price: 0,
+    description: "",
+    lessons: [],
+  });
+
+  // Нові стани для пошуку та редагування
+  const [searchTerm, setSearchTerm] = useState("");
+  const [editingUser, setEditingUser] = useState(null);
+  const [financeSearch, setFinanceSearch] = useState("");
 
   useEffect(() => {
     fetchAdminData();
@@ -47,184 +55,112 @@ const AdminDashboard = () => {
     }
   };
 
+  // Логіка пошуку
+  const filteredUsers = data.users.filter(
+    (user) =>
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
+  // Логіка збереження змін
+  const handleUpdateUser = async (e) => {
+    e.preventDefault();
+    try {
+      await api.put(`/admin/users/${editingUser._id}`, editingUser);
+      setEditingUser(null);
+      fetchAdminData(); // Оновити список після редагування
+      alert("Дані користувача оновлено");
+    } catch (err) {
+      alert("Помилка при оновленні");
+    }
+  };
+
+  // Логіка видалення
+  const handleDeleteUser = async (id) => {
+    if (window.confirm("Ви впевнені, що хочете видалити цього користувача?")) {
+      try {
+        await api.delete(`/admin/users/${id}`);
+        fetchAdminData();
+      } catch (err) {
+        alert("Помилка при видаленні");
+      }
+    }
+  };
+
+  // Відкрити форму для нового курсу
+  const handleAddNewCourse = () => {
+    setCurrentCourse({
+      title: "",
+      level: "A1",
+      price: 0,
+      description: "",
+      lessons: [],
+    });
+    setIsCourseModalOpen(true);
+  };
+
+  // Відкрити форму для редагування існуючого
+  const handleEditCourse = (course) => {
+    setCurrentCourse(course);
+    setIsCourseModalOpen(true);
+  };
+
+  // Додати порожній рядок уроку в масив
+  const addLessonField = () => {
+    setCurrentCourse({
+      ...currentCourse,
+      lessons: [
+        ...currentCourse.lessons,
+        { topic: "", type: "Video", duration: "" },
+      ],
+    });
+  };
+
+  // Збереження курсу
+  const handleSaveCourse = async (e) => {
+    e.preventDefault();
+    try {
+      if (currentCourse._id) {
+        await api.put(`/courses/${currentCourse._id}`, currentCourse);
+      } else {
+        await api.post("/courses", currentCourse);
+      }
+      setIsCourseModalOpen(false);
+      fetchAdminData(); // Перезавантажити дані
+      alert("Курс збережено!");
+    } catch (err) {
+      alert("Помилка збереження");
+    }
+  };
+
+  const filteredPayments = data.payments.filter(
+    (p) =>
+      p.userId?.name.toLowerCase().includes(financeSearch.toLowerCase()) ||
+      p.courseId?.title.toLowerCase().includes(financeSearch.toLowerCase()),
+  );
+
+
+
   if (loading) return <div className="loader">Завантаження...</div>;
 
   return (
     <div className="admin-layout">
-      {/* Світлий Сайдбар */}
-      <aside className="admin-sidebar">
-        <div className="sidebar-title">
-          <div
-            style={{
-              background: "#4f46e5",
-              padding: "8px",
-              borderRadius: "10px",
-              color: "white",
-            }}
-          >
-            <LayoutDashboard size={20} />
-          </div>
-          <span>Адмін-панель</span>
-        </div>
-        <nav className="admin-nav">
-          <button
-            className={`nav-item ${activeTab === "overview" ? "active" : ""}`}
-            onClick={() => setActiveTab("overview")}
-          >
-            <TrendingUp size={18} /> Огляд
-          </button>
-          <button
-            className={`nav-item ${activeTab === "users" ? "active" : ""}`}
-            onClick={() => setActiveTab("users")}
-          >
-            <Users size={18} /> Користувачі
-          </button>
-          <button
-            className={`nav-item ${activeTab === "courses" ? "active" : ""}`}
-            onClick={() => setActiveTab("courses")}
-          >
-            <BookOpen size={18} /> Курси
-          </button>
-          <button
-            className={`nav-item ${activeTab === "finance" ? "active" : ""}`}
-            onClick={() => setActiveTab("finance")}
-          >
-            <CreditCard size={18} /> Фінанси
-          </button>
-        </nav>
-      </aside>
-
+      <AdminSidebar activeTab={activeTab} setActiveTab={setActiveTab} />
       <main className="admin-main">
-        {/* РОЗДІЛ: ОГЛЯД */}
         {activeTab === "overview" && (
-          <div className="tab-content">
-            <h1>Загальна аналітика</h1>
-            <div className="admin-stats-grid">
-              <div className="white-card stat-box">
-                <p>Учні</p>
-                <b>{data.stats.totalStudents}</b>
-              </div>
-              <div className="white-card stat-box">
-                <p>Викладачі</p>
-                <b>{data.stats.totalTeachers}</b>
-              </div>
-              <div className="white-card stat-box revenue">
-                <p>Загальний дохід</p>
-                <b>{data.stats.totalRevenue} ₴</b>
-              </div>
-            </div>
-          </div>
+          <OverviewTab
+            stats={data.stats}
+            paymentsCount={data.payments.length}
+          />
         )}
-
-        {/* РОЗДІЛ: КОРИСТУВАЧІ */}
         {activeTab === "users" && (
-          <div className="tab-content">
-            <div className="section-header">
-              <h1>Керування користувачами</h1>
-              <div className="search-box">
-                <Search size={18} />
-                <input type="text" placeholder="Пошук за email..." />
-              </div>
-            </div>
-            <div className="white-card">
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>Ім'я</th>
-                    <th>Роль</th>
-                    <th>Рівень</th>
-                    <th>Дії</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.users.map((user) => (
-                    <tr key={user._id}>
-                      <td>
-                        <b>{user.name}</b>
-                        <br />
-                        <small>{user.email}</small>
-                      </td>
-                      <td>
-                        <span className={`badge ${user.role}`}>
-                          {user.role}
-                        </span>
-                      </td>
-                      <td>{user.level || "—"}</td>
-                      <td>
-                        <button className="icon-btn">
-                          <Edit3 size={16} />
-                        </button>
-                        <button className="icon-btn delete">
-                          <Trash2 size={16} />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <UsersTab users={data.users} refresh={fetchAdminData} />
         )}
-
-        {/* РОЗДІЛ: КУРСИ */}
         {activeTab === "courses" && (
-          <div className="tab-content">
-            <div className="section-header">
-              <h1>Структура навчання</h1>
-              <button className="btn-primary">
-                <Plus size={18} /> Додати рівень
-              </button>
-            </div>
-            <div className="admin-courses-grid">
-              {data.courses.map((course) => (
-                <div key={course._id} className="white-card course-item">
-                  <h3>{course.title}</h3>
-                  <p>
-                    Ціна: <b>{course.price} ₴</b>
-                  </p>
-                  <div className="course-footer">
-                    <span className="badge">{course.level}</span>
-                    <button className="btn-text">Налаштувати модулі</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <CoursesTab courses={data.courses} refresh={fetchAdminData} />
         )}
-
-        {/* РОЗДІЛ: ФІНАНСИ */}
         {activeTab === "finance" && (
-          <div className="tab-content">
-            <h1>Звітність та транзакції</h1>
-            <div className="white-card">
-              <table className="admin-table">
-                <thead>
-                  <tr>
-                    <th>Дата</th>
-                    <th>Користувач</th>
-                    <th>Курс</th>
-                    <th>Сума</th>
-                    <th>Статус</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {data.payments.map((payment) => (
-                    <tr key={payment._id}>
-                      <td>{new Date(payment.date).toLocaleDateString()}</td>
-                      <td>{payment.userId?.name}</td>
-                      <td>{payment.courseId?.title}</td>
-                      <td>
-                        <b>{payment.amount} ₴</b>
-                      </td>
-                      <td>
-                        <span className="status-success">Виконано</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <FinanceTab payments={data.payments} stats={data.stats} />
         )}
       </main>
     </div>

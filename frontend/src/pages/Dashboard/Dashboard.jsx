@@ -3,6 +3,8 @@ import api from "../../api/axios";
 import NextLesson from "./components/NextLesson";
 import StatCard from "./components/StatCard";
 import DeadlineSidebar from "./components/DeadlineSidebar";
+import CourseProgress from "./components/CourseProgress";
+import PaymentHistory from "./components/PaymentHistory";
 import "./Dashboard.css";
 
 const Dashboard = ({ user }) => {
@@ -27,7 +29,11 @@ const Dashboard = ({ user }) => {
       <header className="dashboard-header">
         <div className="welcome-text">
           <h1>👋 Привіт, {user.name}</h1>
-          <p>Ось твій прогрес та плани на сьогодні</p>
+          <p>
+            {user.role === "parent"
+              ? "Контроль навчання та оплати"
+              : "Твій прогрес та плани на сьогодні"}
+          </p>
         </div>
         <div className={`status-tag ${user.role}`}>
           {user.role === "parent" ? "🛡️ Батьківський контроль" : "🎓 Студент"}
@@ -36,7 +42,15 @@ const Dashboard = ({ user }) => {
 
       <div className="dashboard-layout">
         <section className="main-stats-area">
-          <NextLesson lesson={dbData.nextLesson} />
+          {user.role === "student" && <NextLesson lesson={dbData.nextLesson} />}
+
+          <div style={{ marginTop: user.role === "parent" ? "0" : "25px" }}>
+            <CourseProgress
+              completed={dbData.profile.completedModules || 6}
+              total={dbData.profile.totalModules || 10}
+              role={user.role}
+            />
+          </div>
 
           <div className="stats-grid">
             <StatCard
@@ -52,9 +66,11 @@ const Dashboard = ({ user }) => {
           </div>
         </section>
 
-        <aside className="sidebar-area">
+        {user.role === "student" ? (
           <DeadlineSidebar assignments={dbData.assignments} />
-        </aside>
+        ) : (
+          <PaymentHistory userId={user._id} />
+        )}
       </div>
     </div>
   );

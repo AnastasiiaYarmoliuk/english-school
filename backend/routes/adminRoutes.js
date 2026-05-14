@@ -27,15 +27,26 @@ router.get("/users", async (req, res) => {
 });
 
 router.put("/users/:id", async (req, res) => {
-  const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-  });
-  res.json(updatedUser);
+  try {
+    const { name, email, role, level, balance } = req.body;
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      { name, email, role, level, balance },
+      { new: true }, // Повернути вже оновлений об'єкт
+    );
+    res.json(updatedUser);
+  } catch (err) {
+    res.status(400).json({ message: "Помилка при оновленні" });
+  }
 });
 
 router.delete("/users/:id", async (req, res) => {
-  await User.findByIdAndDelete(req.params.id);
-  res.json({ message: "Користувача видалено" });
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ message: "Користувача видалено успішно" });
+  } catch (err) {
+    res.status(500).json({ message: "Помилка видалення" });
+  }
 });
 
 // 3. Керування курсами (зміна цін)

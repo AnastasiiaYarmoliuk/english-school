@@ -2,20 +2,24 @@ const express = require("express");
 const router = express.Router();
 const Course = require("../models/Course");
 
-// Отримати список курсів
-router.get("/", async (req, res) => {
-  const courses = await Course.find();
-  res.json(courses);
+// Створити новий курс (Admin Only)
+router.post('/', async (req, res) => {
+  try {
+    const newCourse = new Course(req.body);
+    await newCourse.save();
+    res.status(201).json(newCourse);
+  } catch (err) {
+    res.status(400).json({ message: "Помилка створення курсу" });
+  }
 });
 
-// Створити курс (тільки для адміна)
-router.post("/", async (req, res) => {
+// Оновити існуючий курс
+router.put('/:id', async (req, res) => {
   try {
-    const course = new Course(req.body);
-    await course.save();
-    res.status(201).json(course);
+    const updatedCourse = await Course.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(updatedCourse);
   } catch (err) {
-    res.status(400).json(err);
+    res.status(400).json({ message: "Помилка оновлення курсу" });
   }
 });
 
