@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Upload, CheckCircle } from "lucide-react";
+import { Upload, CheckCircle, Clock, Award } from "lucide-react";
 import api from "../../../api/axios";
 
 const DeadlineSidebar = ({ assignments, onRefresh }) => {
@@ -11,11 +11,17 @@ const DeadlineSidebar = ({ assignments, onRefresh }) => {
     formData.append("file", file);
 
     try {
-      await api.post(`/users/assignments/${id}/submit`, formData);
+      await api.post(`/users/assignments/${id}/submit`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       alert("Відповідь надіслана!");
       setSubmittingId(null);
+      setFile(null);
       onRefresh(); // Оновлюємо дані на дашборді
     } catch (err) {
+      console.error("Деталі помилки:", err);
       alert("Помилка завантаження");
     }
   };
@@ -27,16 +33,24 @@ const DeadlineSidebar = ({ assignments, onRefresh }) => {
         <div key={item._id} className="deadline-item">
           <div>
             <b>{item.title}</b>
-            {item.status === "pending" ? (
+            {item.status === "pending" && (
               <button
                 className="btn-submit-task"
                 onClick={() => setSubmittingId(item._id)}
               >
                 <Upload size={14} /> Здати роботу
               </button>
-            ) : (
-              <span className="status-done">
-                <CheckCircle size={14} /> Здано
+            )}
+
+            {item.status === "submitted" && (
+              <span className="status-waiting">
+                <Clock size={14} /> На перевірці
+              </span>
+            )}
+
+            {item.status === "graded" && (
+              <span className="status-graded">
+                <Award size={14} /> Оцінено: <b>{item.grade}/100</b>
               </span>
             )}
           </div>

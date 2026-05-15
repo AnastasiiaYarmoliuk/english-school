@@ -6,24 +6,53 @@ const User = require("../models/User");
 // --- 1. РЕЄСТРАЦІЯ ---
 router.post("/register", async (req, res) => {
   try {
-    const { name, email, password, role, secretCode, childId, level } =
+    const { name, email, password, role, secretCode, childEmail, level } =
       req.body;
 
-    const existingUser = await User.findOne({ email });
+    const cleanEmail = email.trim().toLowerCase();
+    const cleanChildEmail = childEmail ? childEmail.trim().toLowerCase() : null;
+
+    const existingUser = await User.findOne({ email: cleanEmail });
     if (existingUser)
       return res.status(400).json({ message: "Email вже зайнятий" });
 
     let finalRole = "student";
+    let childId = null;
 
-    // Перевірка секретного коду з .env
-    if (role === "admin" || role === "teacher") {
+    if (role === "admin") {
+      if (secretCode !== process.env.ADMIN_LOGIN_CODE) {
+        return res
+          .status(403)
+          .json({ message: "Невірний код доступу для адміна" });
+      }
+      finalRole = "admin";
+    } else if (role === "teacher") {
       if (secretCode !== process.env.STAFF_REG_CODE) {
         return res
           .status(403)
-          .json({ message: "Невірний код доступу для персоналу" });
+          .json({ message: "Невірний секретний код для вчителя" });
       }
-      finalRole = role;
+      finalRole = "teacher";
     } else if (role === "parent") {
+      if (!cleanChildEmail) {
+        return res
+          .status(400)
+          .json({ message: "Вкажіть email дитини для прив'язки акаунту" });
+      }
+
+      // Шукаємо дитину
+      const student = await User.findOne({
+        email: cleanChildEmail,
+        role: "student",
+      });
+      if (!student) {
+        return res.status(400).json({
+          message:
+            "Студента з такою поштою не знайдено. Перевірте правильність введення або спочатку зареєструйте дитину.",
+        });
+      }
+
+      childId = student._id;
       finalRole = "parent";
     }
 
@@ -31,13 +60,12 @@ router.post("/register", async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const newUser = new User({
-      name,
-      email,
+      name: name.trim(),
+      email: cleanEmail,
       password: hashedPassword,
       role: finalRole,
       level: finalRole === "student" ? level : "A1",
-      childId: finalRole === "parent" ? childId : null,
-      balance: 0,
+      childId: childId,
     });
 
     await newUser.save();

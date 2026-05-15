@@ -11,16 +11,22 @@ const Dashboard = ({ user }) => {
   const [dbData, setDbData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    api
-      .get(`/users/${user._id}/dashboard`)
-      .then((res) => {
-        setDbData(res.data);
-        setLoading(false);
-      })
-      .catch((err) => console.error(err));
-  }, [user]);
+  const fetchData = async () => {
+    try {
+      const res = await api.get(`/users/${user._id}/dashboard`);
+      setDbData(res.data);
+      setLoading(false);
+    } catch (err) {
+      console.error(err);
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
+    if (user && user._id) {
+      fetchData();
+    }
+  }, [user]);
   if (loading)
     return <div className="loader-container">Завантаження системи...</div>;
 
@@ -46,7 +52,7 @@ const Dashboard = ({ user }) => {
 
           <div style={{ marginTop: user.role === "parent" ? "0" : "25px" }}>
             <CourseProgress
-              completed={dbData.profile.completedModules || 6}
+              completed={dbData.profile.completedModules || 0}
               total={dbData.profile.totalModules || 10}
               role={user.role}
             />
@@ -67,7 +73,7 @@ const Dashboard = ({ user }) => {
         </section>
 
         {user.role === "student" ? (
-          <DeadlineSidebar assignments={dbData.assignments} />
+          <DeadlineSidebar assignments={dbData.assignments} onRefresh={fetchData}/>
         ) : (
           <PaymentHistory userId={user._id} />
         )}

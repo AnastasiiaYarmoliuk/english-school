@@ -3,44 +3,25 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const Course = require("../models/Course");
 const Assignment = require("../models/Assignment");
+const Payment = require("../models/Payment");
 
 async function seedDB() {
   try {
-    // 1. Очищення бази перед наповненням (щоб уникнути дублікатів при перезапуску)
+    // 1. Повне очищення бази
     await User.deleteMany({});
     await Course.deleteMany({});
     await Assignment.deleteMany({});
-    console.log("🗑️  Base cleared");
+    await Payment.deleteMany({});
+    console.log("🗑️  Database cleared");
 
-    // 2. Хешування паролів (Вимога SEC-3)
+    // 2. Генерація солі для хешування
     const salt = await bcrypt.genSalt(10);
-    const adminPass = await bcrypt.hash("admin123", salt);
-    const studentPass = await bcrypt.hash("password123", salt);
-    const parentPass = await bcrypt.hash("parent123", salt);
 
-    // 3. Створення користувачів
+    // 3. СТВОРЕННЯ КОРИСТУВАЧІВ
     console.log("👤 Seeding users...");
 
-    // Створюємо Студента
-    const student = await User.create({
-      name: "Іван Студент",
-      email: "student@test.com",
-      password: studentPass,
-      role: "student",
-      level: "B1",
-      balance: 12,
-    });
-
-    // Створюємо Батька (прив'язуємо до студента Івана)
-    await User.create({
-      name: "Петро Батько",
-      email: "parent@test.com",
-      password: parentPass,
-      role: "parent",
-      childId: student._id, // Зв'язок
-    });
-
-    // Створюємо Адміна
+    // Адмін
+    const adminPass = await bcrypt.hash("admin123", salt);
     await User.create({
       name: "Головний Адмін",
       email: "admin@school.com",
@@ -48,79 +29,107 @@ async function seedDB() {
       role: "admin",
     });
 
-    // 4. Створення курсів та уроків (вбудовані в курс)
+    // Вчитель
+    const teacherPass = await bcrypt.hash("teacher123", salt);
+    const teacher = await User.create({
+      name: "Олена Вікторівна",
+      email: "teacher@school.com",
+      password: teacherPass,
+      role: "teacher",
+    });
+
+    // Студент
+    const studentPass = await bcrypt.hash("password123", salt);
+    const student = await User.create({
+      name: "Микола Студент",
+      email: "student@test.com",
+      password: studentPass,
+      role: "student",
+      level: "B1",
+      balance: 5, // Вже має оплачені заняття
+    });
+
+    // Батько (Прив'язаний до Миколи)
+    const parentPass = await bcrypt.hash("parent123", salt);
+    await User.create({
+      name: "Петро Батько",
+      email: "parent@test.com",
+      password: parentPass,
+      role: "parent",
+      childId: student._id,
+    });
+
+    // 4. СТВОРЕННЯ КУРСІВ
     console.log("📚 Seeding courses...");
     const courses = await Course.insertMany([
       {
         title: "Intermediate English (B1)",
         level: "B1",
         price: 3200,
-        description:
-          "Курс для тих, хто хоче вільно спілкуватися на повсякденні теми.",
+        description: "Курс для впевненого спілкування.",
         lessons: [
           {
-            topic: "Business Correspondence",
-            type: "Video",
-            duration: "30 min",
-          },
-          {
-            topic: "Present Perfect & Business Idioms",
+            topic: "Present Perfect vs Past Simple",
             type: "Live Session",
             duration: "60 хв",
             scheduledDate: new Date(new Date().getTime() + 86400000), // Завтра
           },
-        ],
-      },
-      {
-        title: "Business English (B2)",
-        level: "B2",
-        price: 4500,
-        description: "Професійна англійська для кар'єрного росту.",
-        lessons: [
           {
-            topic: "Meetings & Negotiations",
-            type: "Live Session",
-            duration: "90 хв",
-            scheduledDate: new Date(),
+            topic: "Business Email Writing",
+            type: "Video",
+            duration: "25 min",
           },
         ],
       },
       {
-        title: "IELTS Preparation",
-        level: "C1",
-        price: 6000,
-        description: "Інтенсивна підготовка до міжнародного іспиту.",
+        title: "Upper-Intermediate (B2)",
+        level: "B2",
+        price: 4500,
+        description: "Професійна англійська для роботи.",
         lessons: [],
       },
     ]);
 
-    // 5. Створення дедлайнів (Завдань)
+    // 5. СТВОРЕННЯ ЗАВДАНЬ (ДЛЯ РІЗНИХ СТАНІВ)
     console.log("⏳ Seeding assignments...");
     await Assignment.insertMany([
       {
+        title: "Grammar Quiz: Unit 1",
         studentId: student._id,
         courseId: courses[0]._id,
-        title: "Grammar Quiz: Past Tenses",
-        dueDate: new Date(new Date().getTime() + 86400000 * 2), // Через 2 дні
-        status: "pending",
+        dueDate: new Date(new Date().getTime() + 172800000), // Через 2 дні
+        status: "pending", // Студент побачить у "Дедлайнах"
       },
       {
+        title: "Essay: My Goals",
         studentId: student._id,
         courseId: courses[0]._id,
-        title: "Essay: My Future Career",
-        dueDate: new Date(new Date().getTime() + 86400000 * 5), // Через 5 днів
-        status: "pending",
+        dueDate: new Date(),
+        status: "submitted", // Вчитель побачить у черзі на перевірку
+        fileName: "demo-essay.pdf",
+        answerText: "I want to learn English to travel more.",
       },
       {
+        title: "Vocabulary Test",
         studentId: student._id,
         courseId: courses[0]._id,
-        title: "Listening: Unit 4",
-        dueDate: new Date(new Date().getTime() - 86400000), // Вчора (протерміновано)
-        status: "pending",
+        dueDate: new Date(),
+        status: "graded", // Студент побачить результат
+        grade: 95,
       },
     ]);
 
-    console.log("✅ Database seeded successfully!");
+    // 6. СТВОРЕННЯ ТЕСТОВОЇ ОПЛАТИ (ДЛЯ БАТЬКІВ)
+    await Payment.create({
+      userId: student._id,
+      courseId: courses[0]._id,
+      amount: 3200,
+      status: "success",
+      gateway: "Monobank",
+      date: new Date(),
+    });
+
+    console.log("✅ ALL SYSTEMS GO: Database fully seeded!");
   } catch (error) {
     console.error("❌ Seed error:", error);
   }

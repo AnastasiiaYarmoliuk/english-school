@@ -18,8 +18,8 @@ const CourseEditModal = ({ course, onSave, onClose }) => {
 
   // Видалити урок
   const removeLessonField = (index) => {
-    const newLessons = formData.lessons.filter((_, i) => i !== index);
-    setFormData({ ...formData, lessons: newLessons });
+    const updatedLessons = currentCourse.lessons.filter((_, i) => i !== index);
+    setCurrentCourse({ ...currentCourse, lessons: updatedLessons });
   };
 
   // Оновити конкретне поле уроку

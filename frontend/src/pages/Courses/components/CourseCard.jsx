@@ -43,9 +43,11 @@ const CourseCard = ({ course, user }) => {
 
         <div className="course-footer">
           <div className="course-price">{course.price} ₴</div>
-          <button className="btn-buy" onClick={handlePurchase}>
-            <BookOpen size={18} /> Записатись
-          </button>
+          {user?.role === "parent" && (
+            <button className="btn-buy" onClick={handlePurchase}>
+              <BookOpen size={18} /> Оплатити
+            </button>
+          )}
         </div>
       </div>
     </div>

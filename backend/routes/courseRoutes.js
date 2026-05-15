@@ -13,6 +13,15 @@ router.post('/', async (req, res) => {
   }
 });
 
+router.get("/", async (req, res) => {
+  try {
+    const courses = await Course.find();
+    res.json(courses);
+  } catch (err) {
+    res.status(500).json({ message: "Помилка сервера" });
+  }
+});
+
 // Оновити існуючий курс
 router.put('/:id', async (req, res) => {
   try {

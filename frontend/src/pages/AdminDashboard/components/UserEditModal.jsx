@@ -85,6 +85,22 @@ const UserEditModal = ({ user, onClose, onSave }) => {
                 </select>
               </div>
             )}
+            {editingUser.role === "parent" && (
+              <div className="form-group">
+                <label>ID дитини (з бази даних)</label>
+                <input
+                  type="text"
+                  placeholder="Вставте _id студента"
+                  value={editingUser.childId || ""}
+                  onChange={(e) =>
+                    setEditingUser({ ...editingUser, childId: e.target.value })
+                  }
+                />
+                <small style={{ color: "#64748b" }}>
+                  Це поле пов'язує батька з успішністю учня
+                </small>
+              </div>
+            )}
           </div>
 
           <div className="form-group">
@@ -102,11 +118,7 @@ const UserEditModal = ({ user, onClose, onSave }) => {
           </div>
 
           <div className="modal-actions">
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick={onClose}
-            >
+            <button type="button" className="btn-secondary" onClick={onClose}>
               Скасувати
             </button>
             <button type="submit" className="btn-primary">

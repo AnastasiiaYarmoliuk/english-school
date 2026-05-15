@@ -7,6 +7,7 @@ import AdminDashboard from "./pages/AdminDashboard/AdminDashboard";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import "./App.css";
 import About from "./pages/About/About";
+import TeacherDashboard from "./pages/TeacherDashboard/TeacherDashboard";
 
 function App() {
   const [user, setUser] = useState(
@@ -30,11 +31,10 @@ function App() {
         {page === "about" && <About />}
         {page === "auth" && <Auth setUser={setUser} setPage={setPage} />}
         {page === "dashboard" &&   user &&
-          (user.role === "admin" ? (
-            <AdminDashboard />
-          ) : (
+          (user.role === "admin" ? <AdminDashboard /> :
+          user.role === "teacher" ? <TeacherDashboard /> : 
             <Dashboard user={user} />
-          ))}
+          )}
       </main>
     </div>
   );

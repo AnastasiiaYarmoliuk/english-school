@@ -11,11 +11,11 @@ const assignmentSchema = new mongoose.Schema({
     ref: "Course",
     required: true,
   },
-  title: String, // Назва завдання (копіюємо з уроку)
-  dueDate: Date, // Кінцева дата (Дедлайн)
+  title: String, 
+  dueDate: Date, 
   status: {
     type: String,
-    enum: ["pending", "submitted", "completed"],
+    enum: ["pending", "submitted", "completed", "graded"],
     default: "pending",
     },
     answerText: String,

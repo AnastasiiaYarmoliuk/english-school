@@ -6,6 +6,15 @@ const User = require("../models/User");
 // Створити оплату
 router.post("/", async (req, res) => {
   try {
+    const user = await User.findById(req.body.userId);
+
+    if (user && user.role === "admin") {
+      return res.status(403).json({
+        message:
+          "Адміністратори не можуть купувати курси. Використовуйте акаунт студента.",
+      });
+    }
+
     const payment = new Payment(req.body);
     await payment.save();
 

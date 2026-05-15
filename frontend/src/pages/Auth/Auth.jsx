@@ -14,6 +14,7 @@ const Auth = ({ setUser, setPage }) => {
     password: "",
     role: "student",
     secretCode: "",
+    childEmail: ""
   });
 
   // Секретний механізм відкриття поля адміна
@@ -36,6 +37,14 @@ const Auth = ({ setUser, setPage }) => {
         setPage("dashboard");
       } else {
         alert("Реєстрація успішна! Тепер увійдіть.");
+        setFormData({
+          name: "",
+          email: "",
+          password: "",
+          role: "student",
+          secretCode: "",
+          childEmail: ""
+        });
         setIsLogin(true);
       }
     } catch (err) {
@@ -81,6 +90,7 @@ const Auth = ({ setUser, setPage }) => {
                 <input
                   type="text"
                   placeholder="Олександр"
+                  value={formData.name}
                   onChange={(e) =>
                     setFormData({ ...formData, name: e.target.value })
                   }
@@ -97,6 +107,7 @@ const Auth = ({ setUser, setPage }) => {
               <input
                 type="email"
                 placeholder="example@mail.com"
+                value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
@@ -112,6 +123,7 @@ const Auth = ({ setUser, setPage }) => {
               <input
                 type="password"
                 placeholder="••••••••"
+                value={formData.password}
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
                 }
@@ -134,6 +146,29 @@ const Auth = ({ setUser, setPage }) => {
                   <option value="parent">Один з батьків</option>
                 </select>
               </div>
+            </div>
+          )}
+
+          {!isLogin && formData.role === "parent" && (
+            <div className="form-group fade-in">
+              <label>Email вашої дитини (студента)</label>
+              <div className="input-wrapper">
+                <Mail size={18} />
+                <input
+                  type="email"
+                  placeholder="Введіть пошту, за якою зареєстрована дитина"
+                  value={formData.childEmail}
+                  onChange={(e) =>
+                    setFormData({ ...formData, childEmail: e.target.value })
+                  }
+                  required
+                />
+              </div>
+              <small
+                style={{ display: "block", marginTop: "5px", color: "#64748b" }}
+              >
+                Дитина вже має бути зареєстрована в системі як студент.
+              </small>
             </div>
           )}
 

@@ -17,19 +17,6 @@ const AdminDashboard = () => {
   });
   const [loading, setLoading] = useState(true);
 
-  const [isCourseModalOpen, setIsCourseModalOpen] = useState(false);
-  const [currentCourse, setCurrentCourse] = useState({
-    title: "",
-    level: "A1",
-    price: 0,
-    description: "",
-    lessons: [],
-  });
-
-  // Нові стани для пошуку та редагування
-  const [searchTerm, setSearchTerm] = useState("");
-  const [editingUser, setEditingUser] = useState(null);
-  const [financeSearch, setFinanceSearch] = useState("");
 
   useEffect(() => {
     fetchAdminData();
@@ -54,92 +41,6 @@ const AdminDashboard = () => {
       console.error(err);
     }
   };
-
-  // Логіка пошуку
-  const filteredUsers = data.users.filter(
-    (user) =>
-      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.name.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
-
-  // Логіка збереження змін
-  const handleUpdateUser = async (e) => {
-    e.preventDefault();
-    try {
-      await api.put(`/admin/users/${editingUser._id}`, editingUser);
-      setEditingUser(null);
-      fetchAdminData(); // Оновити список після редагування
-      alert("Дані користувача оновлено");
-    } catch (err) {
-      alert("Помилка при оновленні");
-    }
-  };
-
-  // Логіка видалення
-  const handleDeleteUser = async (id) => {
-    if (window.confirm("Ви впевнені, що хочете видалити цього користувача?")) {
-      try {
-        await api.delete(`/admin/users/${id}`);
-        fetchAdminData();
-      } catch (err) {
-        alert("Помилка при видаленні");
-      }
-    }
-  };
-
-  // Відкрити форму для нового курсу
-  const handleAddNewCourse = () => {
-    setCurrentCourse({
-      title: "",
-      level: "A1",
-      price: 0,
-      description: "",
-      lessons: [],
-    });
-    setIsCourseModalOpen(true);
-  };
-
-  // Відкрити форму для редагування існуючого
-  const handleEditCourse = (course) => {
-    setCurrentCourse(course);
-    setIsCourseModalOpen(true);
-  };
-
-  // Додати порожній рядок уроку в масив
-  const addLessonField = () => {
-    setCurrentCourse({
-      ...currentCourse,
-      lessons: [
-        ...currentCourse.lessons,
-        { topic: "", type: "Video", duration: "" },
-      ],
-    });
-  };
-
-  // Збереження курсу
-  const handleSaveCourse = async (e) => {
-    e.preventDefault();
-    try {
-      if (currentCourse._id) {
-        await api.put(`/courses/${currentCourse._id}`, currentCourse);
-      } else {
-        await api.post("/courses", currentCourse);
-      }
-      setIsCourseModalOpen(false);
-      fetchAdminData(); // Перезавантажити дані
-      alert("Курс збережено!");
-    } catch (err) {
-      alert("Помилка збереження");
-    }
-  };
-
-  const filteredPayments = data.payments.filter(
-    (p) =>
-      p.userId?.name.toLowerCase().includes(financeSearch.toLowerCase()) ||
-      p.courseId?.title.toLowerCase().includes(financeSearch.toLowerCase()),
-  );
-
-
 
   if (loading) return <div className="loader">Завантаження...</div>;
 
