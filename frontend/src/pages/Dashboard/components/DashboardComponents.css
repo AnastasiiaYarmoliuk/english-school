@@ -56,6 +56,9 @@
 .btn-join:hover { transform: scale(1.02); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); }
 
 /* Deadlines */
+.db-card{
+padding: 16px;
+}
 .deadline-item {
   display: flex;
   justify-content: space-between;
@@ -115,7 +118,7 @@
 }
 
 .btn-submit-task {
-  background: #f1f5f9;
+  background: #4f46e5;
   border: none;
   padding: 5px 10px;
   border-radius: 6px;
@@ -128,7 +131,7 @@
   gap: 5px;
 }
 
-.btn-submit-task:hover { background: #e2e8f0; }
+.btn-submit-task:hover { background: #3e37d0; }
 
 .status-done {
   color: #10b981;

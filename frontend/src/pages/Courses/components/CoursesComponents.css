@@ -21,6 +21,8 @@
   padding: 15px 15px 15px 45px;
   border-radius: 15px;
   border: 2px solid #e2e8f0;
+  background-color: #eef2ff;
+  color: #1e293b;
   font-size: 1rem;
   transition: 0.3s;
   outline: none;

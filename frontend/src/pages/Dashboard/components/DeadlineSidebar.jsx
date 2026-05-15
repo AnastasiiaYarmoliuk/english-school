@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Upload, CheckCircle, Clock, Award } from "lucide-react";
 import api from "../../../api/axios";
+import "./DashboardComponents.css";
 
 const DeadlineSidebar = ({ assignments, onRefresh }) => {
   const [submittingId, setSubmittingId] = useState(null);

@@ -12,7 +12,7 @@
 }
 
 .welcome-text h1 { font-size: 2.2rem; margin: 0; color: #0f172a; }
-.welcome-text p { color: #64748b; margin: 5px 0 0; }
+.welcome-text p { color: #64748b; margin: 20px 0 0; }
 
 .status-tag {
   padding: 8px 16px;

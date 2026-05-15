@@ -52,12 +52,12 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
 }
 
-.form-group {
+.group {
   margin-bottom: 20px;
   text-align: left;
 }
 
-.form-group label {
+.group label {
   display: block;
   font-size: 0.85rem;
   font-weight: 700;
@@ -67,28 +67,32 @@
   letter-spacing: 0.02em;
 }
 
-.input-wrapper {
+.input-box {
   position: relative;
   display: flex;
   align-items: center;
 }
 
-.input-wrapper svg {
+.input-box svg {
   position: absolute;
   left: 12px;
   color: #94a3b8;
+  pointer-events: none; 
 }
 
-.input-wrapper input, .input-wrapper select {
+.input-box input, .input-box select {
   width: 100%;
   padding: 12px 12px 12px 40px;
   border: 1px solid #e2e8f0;
+  background-color: #f1f5f9;
+  color: #1e293b;
   border-radius: 12px;
   font-size: 1rem;
   transition: 0.2s;
+  outline: none;
 }
 
-.input-wrapper input:focus {
+.input-box input:focus {
   border-color: #4f46e5;
   outline: none;
   box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
@@ -139,7 +143,7 @@
     font-size: 1.5rem;
   }
 
-  .input-wrapper input, .input-wrapper select {
+  .input-box input, .input-box select {
     font-size: 16px; /* Запобігає зуму в iOS */
     padding: 14px 12px 14px 40px; /* Більша зона для натискання пальцем */
   }

@@ -10,6 +10,8 @@
 .courses-header h1 span { color: #4f46e5; }
 .courses-header p { color: #64748b; font-size: 1.2rem; }
 
+
+
 .courses-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));

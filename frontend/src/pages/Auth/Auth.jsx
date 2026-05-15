@@ -83,9 +83,9 @@ const Auth = ({ setUser, setPage }) => {
 
         <form onSubmit={handleSubmit}>
           {!isLogin && (
-            <div className="form-group">
+            <div className="group">
               <label>Ваше ім'я</label>
-              <div className="input-wrapper">
+              <div className="input-box">
                 <User size={18} />
                 <input
                   type="text"
@@ -100,9 +100,9 @@ const Auth = ({ setUser, setPage }) => {
             </div>
           )}
 
-          <div className="form-group">
+          <div className="group">
             <label>Email</label>
-            <div className="input-wrapper">
+            <div className="input-box">
               <Mail size={18} />
               <input
                 type="email"
@@ -116,9 +116,9 @@ const Auth = ({ setUser, setPage }) => {
             </div>
           </div>
 
-          <div className="form-group">
+          <div className="group">
             <label>Пароль</label>
-            <div className="input-wrapper">
+            <div className="input-box">
               <Lock size={18} />
               <input
                 type="password"
@@ -133,9 +133,9 @@ const Auth = ({ setUser, setPage }) => {
           </div>
 
           {!isLogin && (
-            <div className="form-group">
+            <div className="group">
               <label>Я реєструюсь як:</label>
-              <div className="input-wrapper">
+              <div className="input-box">
                 <UserCircle size={18} />
                 <select
                   onChange={(e) =>
@@ -150,9 +150,9 @@ const Auth = ({ setUser, setPage }) => {
           )}
 
           {!isLogin && formData.role === "parent" && (
-            <div className="form-group fade-in">
+            <div className="group fade-in">
               <label>Email вашої дитини (студента)</label>
-              <div className="input-wrapper">
+              <div className="input-box">
                 <Mail size={18} />
                 <input
                   type="email"
@@ -178,7 +178,7 @@ const Auth = ({ setUser, setPage }) => {
               <label style={{ color: "#ef4444" }}>
                 🔑 Код доступу (Admin/Staff)
               </label>
-              <div className="input-wrapper">
+              <div className="input-box">
                 <ShieldCheck size={18} color="#ef4444" />
                 <input
                   type="text"
