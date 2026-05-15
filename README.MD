@@ -44,7 +44,7 @@ docker-compose up --build
 
 *   **Клієнтська частина (React):** [http://localhost:3000](http://localhost:3000)
 *   **Серверна частина (API):** [http://localhost:5000/api](http://localhost:5000/api)
-*   **База даних (MongoDB):** `localhost:27017` (доступ через MongoDB Compass)
+*   **База даних (MongoDB):** `localhost:27018` (доступ через MongoDB Compass)
 
 ---
 
