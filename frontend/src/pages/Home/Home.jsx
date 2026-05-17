@@ -18,17 +18,15 @@ const Home = ({ setPage }) => {
             Сучасна онлайн-платформа з персоналізованим підходом,
             кваліфікованими викладачами та автоматичним контролем прогресу.
           </p>
-          <div className="hero-btns">
             <button className="btn-primary" onClick={() => setPage("courses")}>
               Переглянути курси <ArrowRight size={20} />
             </button>
-            
-          </div>
         </div>
 
         <div className="hero-image">
           {/* Можна додати картинку або абстрактну фігуру */}
           <div
+            className="figure"
             style={{
               width: "350px",
               height: "350px",

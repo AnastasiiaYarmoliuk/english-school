@@ -29,7 +29,7 @@ const DeadlineSidebar = ({ assignments, onRefresh }) => {
 
   return (
     <div className="db-card deadline-card">
-      <h3 className="sidebar-title">Мої завдання</h3>
+      <h3 className="deadline-title">Мої завдання</h3>
       {assignments.map((item) => (
         <div key={item._id} className="deadline-item">
           <div>

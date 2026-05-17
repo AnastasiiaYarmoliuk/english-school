@@ -167,7 +167,7 @@ const CourseEditModal = ({ course, onSave, onClose }) => {
             <button
               type="submit"
               className="btn-primary"
-              style={{ width: "100%" }}
+              style={{ width: "25%" }}
             >
               <Check size={18} /> Зберегти курс
             </button>

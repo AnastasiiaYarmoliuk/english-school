@@ -203,7 +203,7 @@ const TeacherDashboard = ({ user }) => {
                 />
               </div>
               <div className="form-group">
-                <label>Дедлайн (дата)</label>
+                <label>Дедлайн</label>
                 <input
                   type="date"
                   value={newAssignment.dueDate}
@@ -218,7 +218,7 @@ const TeacherDashboard = ({ user }) => {
               </div>
               <button
                 type="submit"
-                className="btn-primary"
+                className="send-btn"
                 style={{ width: "100%" }}
               >
                 <Check size={18} /> Відправити студенту

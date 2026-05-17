@@ -7,9 +7,6 @@ const About = () => {
     <div className="about-page fade-in">
       {/* HERO */}
       <section className="about-hero">
-        <span className="badge" style={{ marginBottom: "15px" }}>
-          Наша історія
-        </span>
         <h1>
           Ми робимо англійську <br /> вашою рідною мовою
         </h1>
