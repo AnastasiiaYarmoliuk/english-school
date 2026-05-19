@@ -17,6 +17,7 @@ const CourseCard = ({ course, user }) => {
         amount: course.price,
       });
       alert(`Успішно! Курс "${course.title}" додано до вашого кабінету.`);
+      window.location.href = "/dashboard";
     } catch (err) {
       alert("Помилка при оплаті. Спробуйте пізніше.");
     }

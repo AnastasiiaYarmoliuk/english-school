@@ -6,25 +6,39 @@ const User = require("../models/User");
 // Створити оплату
 router.post("/", async (req, res) => {
   try {
-    const user = await User.findById(req.body.userId);
+    const { userId, courseId, amount } = req.body;
 
-    if (user && user.role === "admin") {
-      return res.status(403).json({
-        message:
-          "Адміністратори не можуть купувати курси. Використовуйте акаунт студента.",
-      });
+    // 1. Шукаємо того, хто платить
+    const payer = await User.findById(userId);
+
+    // 2. Визначаємо, кому саме нараховувати баланс
+    let targetStudentId = userId; // За замовчуванням - самому собі
+
+    if (payer.role === "parent") {
+      if (!payer.childId) {
+        return res.status(400).json({ message: "У вас не прив'язана дитина!" });
+      }
+      targetStudentId = payer.childId; // Якщо платить батько, ціль - дитина
     }
 
-    const payment = new Payment(req.body);
+    // 3. Створюємо запис про оплату
+    const payment = new Payment({
+      userId: payer._id, 
+      courseId,
+      amount,
+      status: "success",
+      gateway: "Monobank"
+    });
     await payment.save();
 
-    // Автоматично додаємо баланс студенту після успішної оплати
-    // Якщо платить батько, userId у запиті має бути ID студента
-    await User.findByIdAndUpdate(req.body.userId, { $inc: { balance: 1 } });
+    // 4. ОНОВЛЮЄМО БАЛАНС ДИТИНИ (або студента)
+    await User.findByIdAndUpdate(targetStudentId, { $inc: { balance: 10 } });
 
-    res.status(201).json(payment);
+    res
+      .status(201)
+      .json({ message: "Оплата успішна, баланс дитини оновлено!" });
   } catch (err) {
-    res.status(400).json(err);
+    res.status(500).json({ message: "Помилка оплати" });
   }
 });
 
